@@ -1,23 +1,20 @@
 package com.xuanyuan.fms.controller;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletResponse;
-
+import com.xuanyuan.common.utils.PropertyHolder;
+import com.xuanyuan.common.web.BaseController;
+import com.xuanyuan.fms.entity.SysAttachsEntity;
+import com.xuanyuan.fms.pojo.FileDesc;
+import com.xuanyuan.fms.pojo.FileParam;
+import com.xuanyuan.fms.service.SysAttachsServiceI;
+import com.xuanyuan.fms.util.Constants;
+import com.xuanyuan.fms.util.FileUtils;
+import com.xuanyuan.fms.util.SFTPUtil;
+import com.xuanyuan.utils.StringUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -29,16 +26,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.xuanyuan.common.utils.PropertyHolder;
-import com.xuanyuan.common.web.BaseController;
-import com.xuanyuan.fms.entity.SysAttachsEntity;
-import com.xuanyuan.fms.pojo.FileDesc;
-import com.xuanyuan.fms.pojo.FileParam;
-import com.xuanyuan.fms.service.SysAttachsServiceI;
-import com.xuanyuan.fms.util.Constants;
-import com.xuanyuan.fms.util.FileUtils;
-import com.xuanyuan.fms.util.SFTPUtil;
-import com.xuanyuan.utils.StringUtils;
+import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 附件上传控制层
@@ -62,9 +61,9 @@ public class FileUploadController extends BaseController{
     private static final Logger logger = LoggerFactory.getLogger(FileUploadController.class);
 
     /** 静态文件代理目录*/
-    private static String staticProxyDir;
+    private static String staticProxyDir = PropertyHolder.getString("static.proxy.dir");
     /** 是否远程 */
-    private static String isremote;
+    private static String isremote = PropertyHolder.getString("upload.remote");
 
     /** 默认上传文件类型 */
     private static final String FILE_TYPE = "*.jpg;*.jpge;*.gif;*.png;";
@@ -74,8 +73,16 @@ public class FileUploadController extends BaseController{
 
     @PostConstruct
     public void init(){
-        staticProxyDir = PropertyHolder.getString("static.proxy.dir");
-        isremote = PropertyHolder.getString("upload.remote");
+        Environment env = PropertyHolder.getEnv();
+        if(null == env){
+            logger.info("Environment is null");
+        } else {
+            logger.info("Environment ActiveProfiles: {}", env.getActiveProfiles());
+        }
+        logger.info("staticProxyDir = {}", staticProxyDir);
+        logger.info("isremote = {}", isremote);
+//        staticProxyDir = PropertyHolder.getString("static.proxy.dir");
+//        isremote = PropertyHolder.getString("upload.remote");
     }
 
     /**
@@ -93,7 +100,6 @@ public class FileUploadController extends BaseController{
     /**
      * 文件下载
      *
-     * @param path
      * @return
      * @throws IOException
      */
