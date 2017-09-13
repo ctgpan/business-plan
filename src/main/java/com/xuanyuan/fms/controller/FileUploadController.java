@@ -14,7 +14,6 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -73,12 +72,6 @@ public class FileUploadController extends BaseController{
 
     @PostConstruct
     public void init(){
-        Environment env = PropertyHolder.getEnv();
-        if(null == env){
-            logger.info("Environment is null");
-        } else {
-            logger.info("Environment ActiveProfiles: {}", env.getActiveProfiles());
-        }
         logger.info("staticProxyDir = {}", staticProxyDir);
         logger.info("isremote = {}", isremote);
 //        staticProxyDir = PropertyHolder.getString("static.proxy.dir");
