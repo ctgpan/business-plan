@@ -105,11 +105,27 @@
     
     <repositories>
 		<repository>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</snapshots>
 			<id>nexus-repos</id>
 			<name>Team Nexus Repository</name>
 			<url>http://183.63.157.138:18081/nexus/content/groups/public/</url>
 		</repository>
 		<repository>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</snapshots>
 			<id>nexus-repos-snapshots</id>
 			<name>Team Nexus Repository</name>
 			<url>http://183.63.157.138:18081/nexus/content/groups/public-snapshots/</url>
